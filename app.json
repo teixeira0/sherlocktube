@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "sherlocktube",
+    "name": "Sherlock Tube",
     "slug": "sherlocktube",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -18,9 +18,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "buildNumber":"1",
+      "supportsTablet": true,
+      "bundleIdentifier": "com.tex.sherlocktube"
     },
     "android": {
+      "versionCode":4,
+      "userInterfaceStyle": "light",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
