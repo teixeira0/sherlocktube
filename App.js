@@ -1,8 +1,8 @@
-import { ScreenStack } from './sherlocktube.js'
+import { MenuScreen, ScreenStack } from './sherlocktube.js'
 
 const SherlockTube = () => {
   return (
-    <ScreenStack />
+    <MenuScreen />
   )
 }
 export default SherlockTube
