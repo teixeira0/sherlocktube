@@ -11,9 +11,6 @@ import {
   useSafeAreaInsets,
   initialWindowMetrics,
 } from 'react-native-safe-area-context';
-import * as Font from 'expo-font';
-import { Montserrat_500Medium, Montserrat_500Medium_Italic, Montserrat_600SemiBold, Montserrat_600SemiBold_Italic } from '@expo-google-fonts/montserrat';
-import * as SplashScreen from 'expo-splash-screen';
 import { styles } from './styles.js'
 import { Images, Icons } from './Files.js'
 import * as Device from 'expo-device';
@@ -22,20 +19,9 @@ import * as Clipboard from 'expo-clipboard';
 import { useIsFocused } from '@react-navigation/native';
 import { createNavigationContainerRef } from '@react-navigation/native';
 
-
-
 var screenResolution = {width: Dimensions.get('window').width, height: Dimensions.get('window').height}
 
 const Stack = createStackNavigator();
-SplashScreen.preventAutoHideAsync();
-
-let fonts = {
-  Montserrat_500Medium,
-  Montserrat_500Medium_Italic,
-  Montserrat_600SemiBold,
-  Montserrat_600SemiBold_Italic
-};
-
 
 export const navigationRef = createNavigationContainerRef()
 
@@ -167,20 +153,11 @@ export class MenuScreen extends Component {
       tutorial:false
     }
   }
-  
-  async _loadFontsAsync() {
-    await Font.loadAsync(fonts);
-    await SplashScreen.hideAsync();
-  }
-
-  componentDidMount() {
-    this._loadFontsAsync();
-  }
 
   render() {
     return(
       <SafeAreaView style={styles.container}>
-        <View style={{height:screenResolution.height, width:screenResolution.width, flexGrow:1}}>
+        <View onLayout={this.props.onLayout} style={{height:screenResolution.height, width:screenResolution.width, flexGrow:1}}>
           <ScreenStack tutorial={this.state.tutorial}/>
           <View style={[styles.fixedContainer, {
             width:screenResolution.width, 
@@ -243,7 +220,7 @@ class HomeScreen extends Component {
       pasted:false,
       url:'',
       buttonText:"Verificar Vídeo",
-      buttonColor:'#9172C5',
+      buttonColor:'#9172C5'
     }
     this.youtube = new Youtube()
   }
@@ -328,7 +305,7 @@ class Hint extends Component{
       <View style={[this.props.style, styles.fixedContainer, {
         width:screenResolution.width, 
         height:screenResolution.width*0.2,
-        backgroundColor:(this.state.danger == 0 ? 'white' : (this.state.danger == 1 ? '#FFFA7E  ' : '#C57272'))
+        backgroundColor:(this.state.danger == 0 ? 'white' : (this.state.danger == 1 ? '#FFFA7E' : '#C57272'))
       }]}>
         <Text style={{width:screenResolution.width*0.8, height:'100%', fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(2), textAlignVertical:'center'}}>{this.state.warning}</Text>
       </View>
@@ -443,7 +420,7 @@ class VideoScreen extends Component {
           height:screenResolution.height*0.02,
           }]}/>
         <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.06, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Vídeo Analisado:</Text>
-        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.13, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>{this.video.snippet.title}</Text>
+        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.13, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(2.5)}}>{this.video.snippet.title}</Text>
         <Image style={{flexGrow:0, width:'80%', aspectRatio:4/3}} resizeMode='contain' source = {{uri:this.video.snippet.thumbnails.high.url}} /> 
         <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.05, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Canal:</Text>        
         <Image style={{flexGrow:0, width:'10%', aspectRatio:1}} resizeMode='contain' source = {{uri:this.channel.snippet.thumbnails.high.url}} /> 

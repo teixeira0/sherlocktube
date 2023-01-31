@@ -18,20 +18,26 @@
       "**/*"
     ],
     "ios": {
-      "buildNumber":"1",
+      "buildNumber": "1",
       "supportsTablet": true,
       "bundleIdentifier": "com.tex.sherlocktube"
     },
     "android": {
-      "versionCode":4,
+      "versionCode": 4,
       "userInterfaceStyle": "light",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.tex.sherlocktube"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6b8c5d1f-805d-409a-b2e2-da280046d704"
+      }
     }
   }
 }
