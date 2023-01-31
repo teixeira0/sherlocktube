@@ -20,6 +20,8 @@ import * as Device from 'expo-device';
 import axios from 'axios';
 import * as Clipboard from 'expo-clipboard';
 import { useIsFocused } from '@react-navigation/native';
+import { createNavigationContainerRef } from '@react-navigation/native';
+
 
 
 var screenResolution = {width: Dimensions.get('window').width, height: Dimensions.get('window').height}
@@ -33,6 +35,15 @@ let fonts = {
   Montserrat_600SemiBold,
   Montserrat_600SemiBold_Italic
 };
+
+
+export const navigationRef = createNavigationContainerRef()
+
+export function navigate(name, params) {
+  if (navigationRef.isReady()) {
+    navigationRef.navigate(name, params);
+  }
+}
 
 class Youtube {
 
@@ -108,9 +119,9 @@ export class ScreenStack extends Component {
   }
 
   render() {
-    var initialRouteName  = "homeScreen"
+    var initialRouteName = "homeScreen"
     return(
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator
           initialRouteName={initialRouteName}
           screenOptions={{
@@ -125,10 +136,23 @@ export class ScreenStack extends Component {
           <Stack.Screen
             name="homeScreen"
             component={HomeScreen} 
+            initialParams={this.props.tutorial}
           />
           <Stack.Screen
             name="videoScreen"
             component={VideoScreen} 
+          />
+          <Stack.Screen
+            name="sideMenuScreen"
+            component={SideMenuScreen} 
+          />
+          <Stack.Screen
+            name="referenceScreen"
+            component={ReferenceScreen} 
+          />
+          <Stack.Screen
+            name="creditsScreen"
+            component={CreditsScreen} 
           />
         </Stack.Navigator>
       </NavigationContainer>
@@ -140,6 +164,7 @@ export class MenuScreen extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      tutorial:false
     }
   }
   
@@ -156,7 +181,7 @@ export class MenuScreen extends Component {
     return(
       <SafeAreaView style={styles.container}>
         <View style={{height:screenResolution.height, width:screenResolution.width, flexGrow:1}}>
-          <ScreenStack />
+          <ScreenStack tutorial={this.state.tutorial}/>
           <View style={[styles.fixedContainer, {
             width:screenResolution.width, 
             height:screenResolution.height*0.1, 
@@ -170,6 +195,9 @@ export class MenuScreen extends Component {
                        position:'absolute', bottom:17, left:45,
                      }, styles.fixedContainer]} 
               onPress={() => {
+                this.setState({
+                  tutorial:false
+                }, () => {navigate("sideMenuScreen")})
               }}
             >
               <Image style={{flexGrow:0, width:'100%', height:'100%'}} resizeMode='contain' source={Icons.menu} /> 
@@ -180,6 +208,9 @@ export class MenuScreen extends Component {
                        position:'absolute', bottom:17, right:45,
                      }, styles.fixedContainer]} 
               onPress={() => {
+                this.setState({
+                  tutorial:!this.state.tutorial
+                }, () => {navigate("homeScreen", {tutorial:this.state.tutorial})})
               }}
             >
               <Image style={{flexGrow:0, width:'100%', height:'100%'}} resizeMode='contain' source={Icons.help} /> 
@@ -190,6 +221,9 @@ export class MenuScreen extends Component {
                        position:'absolute', bottom:0,
                      }, styles.fixedContainer]} 
               onPress={() => {
+                this.setState({
+                  tutorial:false
+                }, () => {navigate("homeScreen", {tutorial:this.state.tutorial})})
               }}
             >
               <Image style={{flexGrow:0, width:'100%', height:'100%'}} resizeMode='contain' source={Icons.investigate} /> 
@@ -209,16 +243,18 @@ class HomeScreen extends Component {
       pasted:false,
       url:'',
       buttonText:"Verificar Vídeo",
-      buttonColor:'#9172C5'
+      buttonColor:'#9172C5',
     }
     this.youtube = new Youtube()
   }
 
   render() {
-    const { isFocused } = this.props;
+    var tutorial = this.props.route.params.tutorial
     return (
       <View style={styles.container}>
-        <Text style={{position:'absolute', top:120, width:screenResolution.width*0.8, height:screenResolution.height*0.5, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(6)}}>Investigue pistas de vídeos que espalham <Text style={{fontFamily:"Montserrat_500Medium_Italic"}}>fake news</Text>.</Text>
+        {!tutorial && 
+          <Text style={{position:'absolute', top:120, width:screenResolution.width*0.8, height:screenResolution.height*0.5, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(6)}}>Investigue pistas de vídeos que espalham <Text style={{fontFamily:"Montserrat_500Medium_Italic"}}>fake news</Text>.</Text>
+        }
         <View style={[{width:screenResolution.width*0.8, height:screenResolution.height*0.1,flexDirection:'row',position:'absolute', top:410}, styles.fixedContainer]}>
           <TextInput value = {(this.state.pasted) ? this.state.clipboard : null} style={[{width:'82%'}, styles.input]} 
               onChangeText={(newUrl) => {
@@ -270,7 +306,10 @@ class HomeScreen extends Component {
           }}
         >
           <Text style={{fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>{this.state.buttonText}</Text>
-        </Pressable>     
+        </Pressable> 
+        {tutorial &&    
+          <Image style={{opacity: tutorial ? 1 : 0, flexGrow:0, width:screenResolution.width*0.8, height:screenResolution.height, position:'absolute', top:60}} resizeMode='contain' source = {Images.tutorial} /> 
+        }
       </View> 
     )
   }
@@ -289,7 +328,7 @@ class Hint extends Component{
       <View style={[this.props.style, styles.fixedContainer, {
         width:screenResolution.width, 
         height:screenResolution.width*0.2,
-        backgroundColor:(this.state.danger == 0 ? 'white' : (this.state.danger == 1 ? '#C5BD72' : '#C57272'))
+        backgroundColor:(this.state.danger == 0 ? 'white' : (this.state.danger == 1 ? '#FFFA7E  ' : '#C57272'))
       }]}>
         <Text style={{width:screenResolution.width*0.8, height:'100%', fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(2), textAlignVertical:'center'}}>{this.state.warning}</Text>
       </View>
@@ -392,8 +431,6 @@ class VideoScreen extends Component {
       hint = {danger:0, warning:"Este canal publicou " + videos + " vídeos."}
     } 
     this.hints.push(hint) 
-
-    console.log(this.channel.statistics)
   }
 
   render() {
@@ -427,6 +464,128 @@ class VideoScreen extends Component {
           height:screenResolution.height*0.15,
           }]}/>
       </ScrollView>
+    )
+  }
+}
+
+class ReferenceScreen extends Component{
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    return(
+      <ScrollView 
+          style={{height:screenResolution.height, width:screenResolution.width}}
+          contentContainerStyle={{alignItems: 'center'}}>   
+        <View style={[styles.fixedContainer, {
+          width:screenResolution.width, 
+          height:screenResolution.height*0.02,
+          }]}/>
+        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.1, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Referências</Text>
+        <Text onPress={() => Linking.openURL('https://link.springer.com/chapter/10.1007/978-3-030-90087-8_21')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.28, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>(Inglês) Detecting Fake News on COVID-19 Vaccine from YouTube Videos Using Advanced Machine Learning Approaches</Text>
+        <Text onPress={() => Linking.openURL('https://www.sciencedirect.com/science/article/pii/S0167865522000071')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.25, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>(Inglês) Effective fake news video detection using domain knowledge and multimodal data fusion on youtube</Text>
+        <Text onPress={() => Linking.openURL('https://journals.sagepub.com/doi/abs/10.1177/0163443720977301')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.3, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>(Inglês) Fake news as fake politics: the digital materialities of YouTube misinformation videos about Brazilian oil spill catastrophe</Text>
+        <Text onPress={() => Linking.openURL('https://educamidia.org.br/')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.1, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>Site Educamídia</Text>
+        <Text onPress={() => Linking.openURL('https://g1.globo.com/fato-ou-fake/noticia/2018/09/25/fato-ou-fake-saiba-como-identificar-se-um-conteudo-e-falso.ghtml')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.2, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>Fato ou Fake? Saiba como identificar se um conteúdo é falso</Text>
+        <View style={[styles.fixedContainer, {
+          width:screenResolution.width, 
+          height:screenResolution.height*0.15,
+          }]}/>
+      </ScrollView>
+
+    )
+  }
+}
+
+class CreditsScreen extends Component{
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    return(
+      <ScrollView 
+          style={{height:screenResolution.height, width:screenResolution.width}}
+          contentContainerStyle={{alignItems: 'center'}}>   
+        <View style={[styles.fixedContainer, {
+          width:screenResolution.width, 
+          height:screenResolution.height*0.02,
+          }]}/>
+        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.1, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Créditos</Text>
+        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.3, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>Este aplicativo foi desenvolvido para a disciplina de Sistemas de Informação, na Universidade de Brasília, 2023.</Text>
+        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.08, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Desenvolvimento</Text>
+        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.3, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>Rodrigo Teixeira</Text>
+        <View style={[styles.fixedContainer, {
+          width:screenResolution.width, 
+          height:screenResolution.height*0.15,
+          }]}/>
+      </ScrollView>
+
+    )
+  }
+}
+
+class SideMenuScreen extends Component{
+  constructor(props) {
+    super(props)
+  }
+
+  render() {
+    return(
+      <View style={styles.container}>
+        <Pressable
+            style={[{width:'100%', 
+                     height:screenResolution.height*0.12,
+                     position:'absolute', top:60,
+                     backgroundColor:'#9172C5'
+                   }, styles.fixedContainer]} 
+            onPress={() => {
+              const navigation = this.props.navigation
+              navigation.navigate("referenceScreen")
+            }}>
+          <Text style={{fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Referências</Text>
+        </Pressable>
+        <Pressable
+            style={[{width:'100%', 
+                     height:screenResolution.height*0.12,
+                     position:'absolute', top:180,
+                     backgroundColor:'#D9D9D9'
+                   }, styles.fixedContainer]} 
+            onPress={() => {}}>
+          <Text style={{fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Estatísticas</Text>
+        </Pressable>
+        <Pressable
+            style={[{width:'100%', 
+                     height:screenResolution.height*0.12,
+                     position:'absolute', top:300,
+                     backgroundColor:'#D9D9D9'
+                   }, styles.fixedContainer]} 
+            onPress={() => {}}>
+          <Text style={{fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Histórico de Vídeos</Text>
+        </Pressable>
+        <Pressable
+            style={[{width:'100%', 
+                     height:screenResolution.height*0.12,
+                     position:'absolute', top:420,
+                     backgroundColor:'#D9D9D9'
+                   }, styles.fixedContainer]} 
+            onPress={() => {}}>
+          <Text style={{fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Login/Cadastre-se</Text>
+        </Pressable>
+        <Pressable
+            style={[{width:'100%', 
+                     height:screenResolution.height*0.12,
+                     position:'absolute', top:540,
+                     backgroundColor:'#9172C5'
+                   }, styles.fixedContainer]} 
+            onPress={() => {
+              const navigation = this.props.navigation
+              navigation.navigate("creditsScreen")
+            }}>
+          <Text style={{fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Créditos</Text>
+        </Pressable>
+      </View>
     )
   }
 }

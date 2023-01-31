@@ -1,4 +1,6 @@
-export const Images = {}
+export const Images = {
+	tutorial:require('./Files/tutorial.png'),
+}
 
 export const Icons = {
 	paste:require('./Files/paste.png'),
