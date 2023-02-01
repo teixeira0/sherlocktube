@@ -368,7 +368,7 @@ class VideoScreen extends Component {
     // Analyzing the video category
     var categoryId = this.category.id
     if (categoryId == 25) {
-      hint = {danger: 0, warning:"O vídeo está marcado com a categoria \""+ this.category.title + "\"."}
+      hint = {danger: 0, warning:"O vídeo está marcado com a categoria \""+ this.category.title + "\", mas atenção para as outras pistas!"}
     } else {
       hint = {danger:1, warning:"Atenção! Este vídeo está marcado com a categoria \"" + this.category.title + "\"! Pode não ser uma notícia!"}
     }   
@@ -424,7 +424,7 @@ class VideoScreen extends Component {
         <Image style={{flexGrow:0, width:'80%', aspectRatio:4/3}} resizeMode='contain' source = {{uri:this.video.snippet.thumbnails.high.url}} /> 
         <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.05, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Canal:</Text>        
         <Image style={{flexGrow:0, width:'10%', aspectRatio:1}} resizeMode='contain' source = {{uri:this.channel.snippet.thumbnails.high.url}} /> 
-        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.05, fontFamily: 'Montserrat_500Medium', textAlign:'center', fontSize:RFPercentage(3)}}>{this.channel.snippet.title}</Text>
+        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.05, fontFamily: 'Montserrat_500Medium', textAlign:'center', fontSize:RFPercentage(2.5)}}>{this.channel.snippet.title}</Text>
         <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.1, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3.2)}}>Encontramos as seguintes pistas:</Text>        
         <View style={[styles.container]}>
           {this.hints.map((props, key) => {
@@ -436,9 +436,20 @@ class VideoScreen extends Component {
             )
           })}
         </View>
+        <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.1, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(2.5)}}>Encontrou uma notícia falsa e quer denunciar? Clique abaixo e saiba mais!</Text>
+        <Pressable
+          style={[{width:screenResolution.width*0.5, 
+                   height:screenResolution.height*0.07,
+                   backgroundColor:'#9172C5',
+                   borderRadius:17
+                 }, styles.fixedContainer]} 
+          onPress={() => Linking.openURL('https://g1.globo.com/fato-ou-fake/eleicoes/noticia/2022/08/18/fato-ou-fake-como-denunciar-fake-news-nas-redes-sociais.ghtml')}
+          >
+            <Text style={{fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(2.5)}}>Como denunciar?</Text>
+        </Pressable> 
         <View style={[styles.fixedContainer, {
           width:screenResolution.width, 
-          height:screenResolution.height*0.15,
+          height:screenResolution.height*0.17,
           }]}/>
       </ScrollView>
     )
@@ -460,11 +471,13 @@ class ReferenceScreen extends Component{
           height:screenResolution.height*0.02,
           }]}/>
         <Text style={{width:screenResolution.width*0.8, height:screenResolution.height*0.1, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(4)}}>Referências</Text>
+        <Text onPress={() => Linking.openURL('https://www.frontiersin.org/articles/10.3389/fcomm.2022.1037432/full')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.28, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>(Inglês) It-which-must-not-be-named: COVID-19 misinformation, tactics to profit from it and to evade content moderation on YouTube</Text>
         <Text onPress={() => Linking.openURL('https://link.springer.com/chapter/10.1007/978-3-030-90087-8_21')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.28, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>(Inglês) Detecting Fake News on COVID-19 Vaccine from YouTube Videos Using Advanced Machine Learning Approaches</Text>
         <Text onPress={() => Linking.openURL('https://www.sciencedirect.com/science/article/pii/S0167865522000071')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.25, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>(Inglês) Effective fake news video detection using domain knowledge and multimodal data fusion on youtube</Text>
         <Text onPress={() => Linking.openURL('https://journals.sagepub.com/doi/abs/10.1177/0163443720977301')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.3, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>(Inglês) Fake news as fake politics: the digital materialities of YouTube misinformation videos about Brazilian oil spill catastrophe</Text>
         <Text onPress={() => Linking.openURL('https://educamidia.org.br/')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.1, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>Site Educamídia</Text>
         <Text onPress={() => Linking.openURL('https://g1.globo.com/fato-ou-fake/noticia/2018/09/25/fato-ou-fake-saiba-como-identificar-se-um-conteudo-e-falso.ghtml')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.2, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>Fato ou Fake? Saiba como identificar se um conteúdo é falso</Text>
+        <Text onPress={() => Linking.openURL('https://g1.globo.com/fato-ou-fake/eleicoes/noticia/2022/08/18/fato-ou-fake-como-denunciar-fake-news-nas-redes-sociais.ghtml')} style={{color: 'blue', width:screenResolution.width*0.8, height:screenResolution.height*0.2, fontFamily: 'Montserrat_500Medium', fontSize:RFPercentage(3)}}>Fato ou Fake: Como denunciar fake news nas redes sociais</Text>
         <View style={[styles.fixedContainer, {
           width:screenResolution.width, 
           height:screenResolution.height*0.15,
